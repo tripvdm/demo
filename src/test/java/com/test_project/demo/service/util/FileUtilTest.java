@@ -1,16 +1,15 @@
 package com.test_project.demo.service.util;
 
+import com.test_project.demo.generator.GeneratorFile;
 import com.test_project.demo.utils.ConstantUtils;
 import java.io.File;
-import java.io.IOException;
-import java.util.Objects;
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.apache.logging.log4j.util.LoaderUtil.getClassLoader;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -22,17 +21,32 @@ class FileUtilTest {
     private FileUtil fileUtil;
 
     @Test
-    public void readFileWhenFileIsCorrect() throws IOException {
-        String result = fileUtil.readFile(new File(Objects.requireNonNull(
-            getClassLoader().getResource(ConstantUtils.CORRECT_FILE_NAME)).getFile()));
+    public void createTemporalyFileIsOk() {
+        File file = fileUtil.createTemporalyFile(GeneratorFile.generateCorrectMultiPartFile());
+
+        assertNotNull(file);
+    }
+
+    @Test
+    public void createTemporalyFileIsNotFound() {
+        File file = fileUtil.createTemporalyFile(null);
+
+        assertNull(file);
+    }
+
+    @Test
+    public void readFileWhenFileIsCorrect() {
+        File file = fileUtil.createTemporalyFile(GeneratorFile.generateCorrectMultiPartFile());
+        String result = fileUtil.readFile(file);
 
         assertNotNull(result);
     }
 
     @Test
-    public void readFileWhenFileNotFound() throws IOException {
-        assertThrows(NullPointerException.class, () -> fileUtil.readFile(new File(Objects.requireNonNull(
-            getClassLoader().getResource(ConstantUtils.NOT_CORRECT_FILE_NAME)).getFile())));
+    public void readFileWhenFileNotFound() {
+        String result = fileUtil.readFile(GeneratorFile.generateUnCorrectFile());
+
+        assertNull(result);
     }
 
     @Test

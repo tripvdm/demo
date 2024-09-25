@@ -1,21 +1,22 @@
 package com.test_project.demo.service;
 
-import com.test_project.demo.exception.ResourceNotFoundException;
+import com.test_project.demo.generator.GeneratorFile;
 import com.test_project.demo.service.util.FileUtil;
 import com.test_project.demo.utils.ConstantUtils;
-import java.io.File;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.multipart.MultipartFile;
 
+import static com.test_project.demo.utils.ConstantUtils.EXPECTED_RESULT_TEXT;
 import static com.test_project.demo.utils.ConstantUtils.INT_ARRAY;
-import static com.test_project.demo.utils.ConstantUtils.NOT_CORRECT_FILE_NAME;
 import static com.test_project.demo.utils.ConstantUtils.NOT_EXISTS_NUMBER_OF_ARRAY;
 import static com.test_project.demo.utils.ConstantUtils.NUMBER_OF_ARRAY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,50 +29,63 @@ class FileServiceTest {
     @InjectMocks
     private FileService fileService;
 
-    private final String CORRECT_FILE_NAME = "test.txt";
-    private final String EXPECTED_RESULT_TEXT = "1/n2/n3/n4/n5/n";
-
     @Test
-    public void getMaxNumberForPositionWhenFileIsNotFound() throws IOException {
-        File file = new File(NOT_CORRECT_FILE_NAME);
-        when(fileUtil.readFile(file)).thenReturn(EXPECTED_RESULT_TEXT);
+    public void getMaxNumberForPositionWhen() {
+        MultipartFile multipart = GeneratorFile.generateUnCorrectMultiPartFile();
+        when(fileUtil.createTemporalyFile(any())).thenReturn(GeneratorFile.generateUnCorrectFile());
 
-        assertThrows(ResourceNotFoundException.class, () -> fileService.getMaxNumberForPosition(file, NUMBER_OF_ARRAY));
-        verify(fileUtil).readFile(file);
+        assertThrows(RuntimeException.class, () -> fileService.getMaxNumberForPosition(multipart, NUMBER_OF_ARRAY));
+        verify(fileUtil).createTemporalyFile(multipart);
     }
 
     @Test
-    public void getMaxNumberForPositionWhenParsingIsNotCorrect() throws IOException {
-        File file = new File(CORRECT_FILE_NAME);
-        when(fileUtil.readFile(file)).thenReturn(ConstantUtils.NOT_CORRECTED_RESULT_TEXT);
-        when(fileUtil.parseToIntArrayFromString(ConstantUtils.NOT_CORRECTED_RESULT_TEXT)).thenReturn(new int[] {});
+    public void getMaxNumberForPositionWhenFileIsNotFound() {
+        MultipartFile multipart = GeneratorFile.generateCorrectMultiPartFile();
+        when(fileUtil.createTemporalyFile(any())).thenReturn(GeneratorFile.generateCorrectFile());
+        when(fileUtil.readFile(any())).thenReturn("");
 
-        assertThrows(ResourceNotFoundException.class, () -> fileService.getMaxNumberForPosition(file, NUMBER_OF_ARRAY));
-        verify(fileUtil).readFile(file);
-        verify(fileUtil).parseToIntArrayFromString(ConstantUtils.NOT_CORRECTED_RESULT_TEXT);
+        assertThrows(RuntimeException.class, () -> fileService.getMaxNumberForPosition(multipart, NUMBER_OF_ARRAY));
+        verify(fileUtil).createTemporalyFile(multipart);
+        verify(fileUtil).readFile(GeneratorFile.generateCorrectFile());
+    }
+
+    @Test
+    public void getMaxNumberForPositionWhenParsingIsNotCorrect() {
+        when(fileUtil.createTemporalyFile(any())).thenReturn(GeneratorFile.generateCorrectFile());
+        when(fileUtil.readFile(any())).thenReturn(ConstantUtils.NOT_CORRECTED_RESULT_TEXT);
+        when(fileUtil.parseToIntArrayFromString(any())).thenReturn(new int[] {});
+
+        assertThrows(RuntimeException.class, () ->
+            fileService.getMaxNumberForPosition(GeneratorFile.generateCorrectMultiPartFileButNotCorrectContent(), NUMBER_OF_ARRAY));
+        verify(fileUtil).createTemporalyFile(any());
+        verify(fileUtil).readFile(any());
+        verify(fileUtil).parseToIntArrayFromString(any());
     }
 
     @Test
     public void getMaxNumberForPositionWhenNumberIsNotFound() throws IOException {
-        File file = new File(CORRECT_FILE_NAME);
-        when(fileUtil.readFile(file)).thenReturn(EXPECTED_RESULT_TEXT);
-        when(fileUtil.parseToIntArrayFromString(EXPECTED_RESULT_TEXT)).thenReturn(INT_ARRAY);
+        when(fileUtil.createTemporalyFile(any())).thenReturn(GeneratorFile.generateCorrectFile());
+        when(fileUtil.readFile(any())).thenReturn(EXPECTED_RESULT_TEXT);
+        when(fileUtil.parseToIntArrayFromString(any())).thenReturn(INT_ARRAY);
 
-        assertThrows(ResourceNotFoundException.class, () -> fileService.getMaxNumberForPosition(file, NOT_EXISTS_NUMBER_OF_ARRAY));
-        verify(fileUtil).readFile(file);
+        assertThrows(RuntimeException.class, () ->
+            fileService.getMaxNumberForPosition(GeneratorFile.generateCorrectMultiPartFile(), NOT_EXISTS_NUMBER_OF_ARRAY));
+        verify(fileUtil).createTemporalyFile(any());
+        verify(fileUtil).readFile(any());
         when(fileUtil.parseToIntArrayFromString(EXPECTED_RESULT_TEXT)).thenReturn(INT_ARRAY);
     }
 
     @Test
-    public void getMaxNumberForPositionWhenWorkingIsOk() throws IOException {
-        File file = new File(CORRECT_FILE_NAME);
-        when(fileUtil.readFile(file)).thenReturn(EXPECTED_RESULT_TEXT);
+    public void getMaxNumberForPositionWhenWorkingIsOk() {
+        when(fileUtil.createTemporalyFile(any())).thenReturn(GeneratorFile.generateCorrectFile());
+        when(fileUtil.readFile(any())).thenReturn(EXPECTED_RESULT_TEXT);
         when(fileUtil.parseToIntArrayFromString(EXPECTED_RESULT_TEXT)).thenReturn(INT_ARRAY);
 
-        int result = fileService.getMaxNumberForPosition(file, NUMBER_OF_ARRAY);
+        int result = fileService.getMaxNumberForPosition(GeneratorFile.generateCorrectMultiPartFile(), NUMBER_OF_ARRAY);
 
-        assertEquals(result, NUMBER_OF_ARRAY);
-        verify(fileUtil).readFile(file);
+        assertEquals(result, 2);
+        verify(fileUtil).createTemporalyFile(any());
+        verify(fileUtil).readFile(any());
         when(fileUtil.parseToIntArrayFromString(EXPECTED_RESULT_TEXT)).thenReturn(INT_ARRAY);
     }
 }

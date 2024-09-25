@@ -5,10 +5,21 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Component
 public class FileUtil {
+
+    public File createTemporalyFile(MultipartFile multipart) {
+        try {
+            File file = File.createTempFile("file", ".txt");
+            multipart.transferTo(file);
+
+            return file;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     public String readFile(File file) {
         try {

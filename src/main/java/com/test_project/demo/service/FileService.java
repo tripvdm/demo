@@ -3,8 +3,11 @@ package com.test_project.demo.service;
 import com.test_project.demo.exception.ResourceNotFoundException;
 import com.test_project.demo.service.util.FileUtil;
 import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FileService {
@@ -12,16 +15,18 @@ public class FileService {
     @Autowired
     private FileUtil fileUtil;
 
-    public int getMaxNumberForPosition(File file, int number) {
+    public int getMaxNumberForPosition(MultipartFile multipart, int number) {
+        File file = null;
         try {
+            file = fileUtil.createTemporalyFile(multipart);
             String text = fileUtil.readFile(file);
             int[] arr = fileUtil.parseToIntArrayFromString(text);
             quickSort(arr, 0, arr.length - 1);
             return arr[arr.length - number];
-        } catch (ResourceNotFoundException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
             throw new ResourceNotFoundException(e.getMessage());
         } finally {
-            file.deleteOnExit();
+            Objects.requireNonNull(file).deleteOnExit();
         }
     }
 
