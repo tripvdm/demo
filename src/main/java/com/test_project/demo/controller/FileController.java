@@ -3,14 +3,9 @@ package com.test_project.demo.controller;
 import com.test_project.demo.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,9 +29,9 @@ public class FileController {
         path = "/upload",
         method = RequestMethod.POST,
         consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void handleUpload(@RequestPart("file") MultipartFile file,
-                             @RequestParam("number") Integer number) throws IOException {
-
+    public int uploadFile(@RequestPart("file") MultipartFile file,
+                           @RequestParam("number") Integer number) throws IOException {
+        return fileService.getMaxNumberForPosition(file.getResource().getFile(), number);
     }
 
 }

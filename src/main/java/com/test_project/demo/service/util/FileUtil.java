@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class FileUtil {
 
-    /*TODO дописать чтение файла*/
     public String readFile(File file) throws IOException {
         RandomAccessFile reader = new RandomAccessFile(file, "r");
         FileChannel channel = reader.getChannel();
@@ -26,9 +25,17 @@ public class FileUtil {
         return new String(buff.array());
     }
 
-    /*TODO распарсить текст*/
     public int[] parseToIntArrayFromString(String text) {
-        return null;
+        String[] strings = text.split("/n");
+
+        int[] intArray = new int[strings.length];
+        int counter = 0;
+        for (String s : strings) {
+            intArray[counter] = Integer.parseInt(s);
+            counter++;
+        }
+
+        return intArray;
     }
 
 }

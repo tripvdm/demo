@@ -1,6 +1,6 @@
 package com.test_project.demo.service;
 
-import com.test_project.demo.exception.NumberNotFoundException;
+import com.test_project.demo.exception.ResourceNotFoundException;
 import com.test_project.demo.service.util.FileUtil;
 import java.io.File;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class FileService {
             quickSort(arr, 0, arr.length - 1);
             return arr[number - 1];
         } catch (Exception e) {
-            throw new NumberNotFoundException(e.getMessage());
+            throw new ResourceNotFoundException(e.getMessage());
         }
     }
 
