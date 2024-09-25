@@ -24,14 +24,14 @@ public class FileService {
             quickSort(arr, 0, arr.length - 1);
             if (optNumber.isPresent()) {
                 return arr[arr.length - optNumber.get()];
+            } else {
+                throw new ResourceNotFoundException("Элемент не число");
             }
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new ResourceNotFoundException(e.getMessage());
+            throw new ResourceNotFoundException(optNumber.get().toString());
         } finally {
             Objects.requireNonNull(file).deleteOnExit();
         }
-
-        throw new ResourceNotFoundException("Элемент не число");
     }
 
     public static void quickSort(int[] arr, int low, int high) {
