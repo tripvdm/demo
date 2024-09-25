@@ -3,6 +3,7 @@ package com.test_project.demo.controller;
 import com.test_project.demo.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,8 +31,8 @@ public class FileController {
         method = RequestMethod.POST,
         consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public int uploadFile(@RequestPart("file") MultipartFile multipart,
-                          @RequestParam("number") Integer number) {
-        return fileService.getMaxNumberForPosition(multipart, number);
+                          @RequestParam("optNumber") Optional<Integer> optNumber) {
+        return fileService.getMaxNumberForPosition(multipart, optNumber);
     }
 
 }

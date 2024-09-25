@@ -11,7 +11,7 @@ public class ResponseExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity catchResourceNotFoundException(ResourceNotFoundException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Не найден элемент", HttpStatus.NOT_FOUND);
     }
 
 }
