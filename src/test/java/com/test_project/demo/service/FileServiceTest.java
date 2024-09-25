@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static com.test_project.demo.utils.ConstantUtils.INT_ARRAY;
 import static com.test_project.demo.utils.ConstantUtils.NOT_CORRECT_FILE_NAME;
 import static com.test_project.demo.utils.ConstantUtils.NOT_EXISTS_NUMBER_OF_ARRAY;
 import static com.test_project.demo.utils.ConstantUtils.NUMBER_OF_ARRAY;
@@ -26,8 +27,6 @@ class FileServiceTest {
 
     @InjectMocks
     private FileService fileService;
-
-    private static final int[] INT_ARRAY = new int[] {1, 2, 3, 4, 5};
 
     private final String CORRECT_FILE_NAME = "test.txt";
     private final String EXPECTED_RESULT_TEXT = "1/n2/n3/n4/n5/n";

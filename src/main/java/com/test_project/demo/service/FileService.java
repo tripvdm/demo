@@ -17,9 +17,11 @@ public class FileService {
             String text = fileUtil.readFile(file);
             int[] arr = fileUtil.parseToIntArrayFromString(text);
             quickSort(arr, 0, arr.length - 1);
-            return arr[number - 1];
-        } catch (Exception e) {
+            return arr[arr.length - number];
+        } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundException(e.getMessage());
+        } finally {
+            file.deleteOnExit();
         }
     }
 
