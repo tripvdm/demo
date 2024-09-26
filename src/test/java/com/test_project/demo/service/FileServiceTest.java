@@ -4,6 +4,7 @@ import com.test_project.demo.generator.GeneratorFile;
 import com.test_project.demo.service.util.FileUtil;
 import com.test_project.demo.utils.ConstantUtils;
 import java.io.IOException;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -34,7 +35,7 @@ class FileServiceTest {
         MultipartFile multipart = GeneratorFile.generateUnCorrectMultiPartFile();
         when(fileUtil.createTemporalyFile(any())).thenReturn(GeneratorFile.generateUnCorrectFile());
 
-        assertThrows(RuntimeException.class, () -> fileService.getMaxNumberForPosition(multipart, NUMBER_OF_ARRAY));
+        assertThrows(RuntimeException.class, () -> fileService.getMaxNumberForPosition(multipart, Optional.of(NUMBER_OF_ARRAY)));
         verify(fileUtil).createTemporalyFile(multipart);
     }
 
@@ -44,7 +45,7 @@ class FileServiceTest {
         when(fileUtil.createTemporalyFile(any())).thenReturn(GeneratorFile.generateCorrectFile());
         when(fileUtil.readFile(any())).thenReturn("");
 
-        assertThrows(RuntimeException.class, () -> fileService.getMaxNumberForPosition(multipart, NUMBER_OF_ARRAY));
+        assertThrows(RuntimeException.class, () -> fileService.getMaxNumberForPosition(multipart, Optional.of(NUMBER_OF_ARRAY)));
         verify(fileUtil).createTemporalyFile(multipart);
         verify(fileUtil).readFile(GeneratorFile.generateCorrectFile());
     }
@@ -56,7 +57,7 @@ class FileServiceTest {
         when(fileUtil.parseToIntArrayFromString(any())).thenReturn(new int[] {});
 
         assertThrows(RuntimeException.class, () ->
-            fileService.getMaxNumberForPosition(GeneratorFile.generateCorrectMultiPartFileButNotCorrectContent(), NUMBER_OF_ARRAY));
+            fileService.getMaxNumberForPosition(GeneratorFile.generateCorrectMultiPartFileButNotCorrectContent(), Optional.of(NUMBER_OF_ARRAY)));
         verify(fileUtil).createTemporalyFile(any());
         verify(fileUtil).readFile(any());
         verify(fileUtil).parseToIntArrayFromString(any());
@@ -69,7 +70,7 @@ class FileServiceTest {
         when(fileUtil.parseToIntArrayFromString(any())).thenReturn(INT_ARRAY);
 
         assertThrows(RuntimeException.class, () ->
-            fileService.getMaxNumberForPosition(GeneratorFile.generateCorrectMultiPartFile(), NOT_EXISTS_NUMBER_OF_ARRAY));
+            fileService.getMaxNumberForPosition(GeneratorFile.generateCorrectMultiPartFile(), Optional.of(NOT_EXISTS_NUMBER_OF_ARRAY)));
         verify(fileUtil).createTemporalyFile(any());
         verify(fileUtil).readFile(any());
         when(fileUtil.parseToIntArrayFromString(EXPECTED_RESULT_TEXT)).thenReturn(INT_ARRAY);
@@ -81,7 +82,7 @@ class FileServiceTest {
         when(fileUtil.readFile(any())).thenReturn(EXPECTED_RESULT_TEXT);
         when(fileUtil.parseToIntArrayFromString(EXPECTED_RESULT_TEXT)).thenReturn(INT_ARRAY);
 
-        int result = fileService.getMaxNumberForPosition(GeneratorFile.generateCorrectMultiPartFile(), NUMBER_OF_ARRAY);
+        int result = fileService.getMaxNumberForPosition(GeneratorFile.generateCorrectMultiPartFile(), Optional.of(NUMBER_OF_ARRAY));
 
         assertEquals(result, 2);
         verify(fileUtil).createTemporalyFile(any());

@@ -31,7 +31,7 @@ public class FileController {
         method = RequestMethod.POST,
         consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public int uploadFile(@RequestPart("file") MultipartFile multipart,
-                          @RequestParam("optNumber") Optional<Integer> optNumber) {
+                          @RequestParam("number") Optional<Integer> optNumber) {
         return fileService.getMaxNumberForPosition(multipart, optNumber);
     }
 

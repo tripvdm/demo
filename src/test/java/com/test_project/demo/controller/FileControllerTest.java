@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class FileControllerTest {
-    private static final String RESULT = "4";
+    private static final String RESULT = "8";
 
     @Autowired
     private MockMvc mockMvc;
@@ -33,11 +33,21 @@ class FileControllerTest {
     }
 
     @Test
-    void uploadFileWhenElementIsNotFound() throws Exception {
+    void uploadFileWhenElementIsNotExists() throws Exception {
         final byte[] bytes = Files.readAllBytes(GeneratorFile.generateRequestFile().toPath());
         this.mockMvc.perform(multipart("/upload")
                 .file("file", bytes)
                 .param("number", String.valueOf(NOT_EXISTS_NUMBER_OF_ARRAY)))
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void uploadFileWhenElementIsNotCorrect() throws Exception {
+        final byte[] bytes = Files.readAllBytes(GeneratorFile.generateRequestFile().toPath());
+        final String numberParam = "sf23sdf";
+        this.mockMvc.perform(multipart("/upload")
+                .file("file", bytes)
+                .param("number", numberParam))
             .andExpect(status().is4xxClientError());
     }
 }

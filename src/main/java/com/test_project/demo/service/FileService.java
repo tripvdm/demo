@@ -1,6 +1,7 @@
 package com.test_project.demo.service;
 
-import com.test_project.demo.exception.ResourceNotFoundException;
+import com.test_project.demo.exception.ElementNotCorrectException;
+import com.test_project.demo.exception.ElementNotExistsException;
 import com.test_project.demo.service.util.FileUtil;
 import java.io.File;
 import java.util.Objects;
@@ -25,10 +26,10 @@ public class FileService {
             if (optNumber.isPresent()) {
                 return arr[arr.length - optNumber.get()];
             } else {
-                throw new ResourceNotFoundException("Элемент не число");
+                throw new ElementNotCorrectException();
             }
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new ResourceNotFoundException(optNumber.get().toString());
+            throw new ElementNotExistsException(optNumber.get().toString());
         } finally {
             Objects.requireNonNull(file).deleteOnExit();
         }
